@@ -7,13 +7,30 @@
   const prev = document.querySelector('.prev');
   let count = 0; // Global count for the slider
   let intervalId = null; // Variable to store the interval ID
+  let load = document.querySelector('.load')
+
   
+  function showLoadingAnimation() {
+    load.style.display = 'block';
+    setTimeout(() =>{
+      
+        load.style.display = 'none'
+    },3000) 
+    
+}
+  function hideLoadingAnimation() {
+   
+}
   Searchbtn.addEventListener('click', fetchNews);
+
+
   
   function fetchNews() {
+    showLoadingAnimation()
       const doc = document.querySelector('.main');
       doc.innerHTML = '';
   
+      
       fetch(`https://newsapi.org/v2/everything?q=${SearchInput.value}&apiKey=${API_KEY}`)
           .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
           .then(data => {
@@ -27,15 +44,21 @@
                           </div>
                       </div>
                   `;
+                 
               }
+             
           })
           .catch(error => console.log(error));
           SearchInput.value = ''
+  
   }
   
   window.onload = function () {
+    showLoadingAnimation()
       fetch(`https://newsapi.org/v2/everything?q=ghana%20sports&apiKey=${API_KEY}`)
-          .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+          .then(response => 
+            response.ok ? response.json() : Promise.reject(response.statusText)
+        )
           .then((data) => {
             homepg(data)
         })
@@ -94,6 +117,7 @@ function pagesetting(id) {
 }
 
 function pages(categoryId) {
+    showLoadingAnimation()
     const doc = document.querySelector('.page#' + categoryId + ' .main');
     // Construct the URL with the provided category ID
     fetch(`https://newsapi.org/v2/everything?q=${categoryId}%20sports&apiKey=${API_KEY}`)
@@ -114,3 +138,9 @@ function pages(categoryId) {
         })
         .catch(error => console.log(error));
 }
+
+SearchInput.addEventListener('keydown', (event) =>{
+   if(event.key === 'Enter'){
+    fetchNews()
+   }
+})
